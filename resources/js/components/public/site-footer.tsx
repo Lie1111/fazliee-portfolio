@@ -34,7 +34,7 @@ export default function SiteFooter({
         try {
             await navigator.clipboard.writeText(profile.email);
             setCopied(true);
-            toast.success('Copied!', { description: profile.email });
+            toast.success('Email copied', { description: profile.email });
             window.setTimeout(() => setCopied(false), 2000);
         } catch {
             toast.error('Could not copy — please copy it manually.');
@@ -44,13 +44,13 @@ export default function SiteFooter({
     return (
         <footer
             className={cn(
-                'relative overflow-hidden bg-brand-ink px-5 pt-20 pb-10 text-brand-cream md:px-10',
+                'relative overflow-hidden bg-forest px-5 pt-20 pb-10 text-paper md:px-10',
                 className,
             )}
         >
             <div className="mx-auto max-w-7xl">
-                <p className="public-display text-[13vw] leading-[0.85] md:text-[8vw]">
-                    Let&apos;s talk
+                <p className="public-display max-w-4xl text-[clamp(3rem,9vw,7.5rem)]">
+                    Got an idea? Let&apos;s talk.
                 </p>
 
                 <div className="mt-10 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
@@ -71,9 +71,9 @@ export default function SiteFooter({
                                     {profile.email}
                                 </span>
                                 {copied ? (
-                                    <Check className="size-4 text-brand-yellow" />
+                                    <Check className="size-4 text-peach" />
                                 ) : (
-                                    <span className="text-xs tracking-widest uppercase opacity-60">
+                                    <span className="text-sm opacity-60">
                                         Copy
                                     </span>
                                 )}
@@ -82,9 +82,7 @@ export default function SiteFooter({
                     </div>
 
                     <nav className="flex flex-col gap-2 text-sm">
-                        <span className="mb-2 text-xs tracking-[0.2em] uppercase opacity-50">
-                            Explore
-                        </span>
+                        <span className="mb-2 text-sm opacity-50">Explore</span>
                         {NAV.map((item) => (
                             <Link
                                 key={item.label}
@@ -97,7 +95,7 @@ export default function SiteFooter({
                     </nav>
 
                     <div className="flex flex-col gap-2 text-sm">
-                        <span className="mb-2 text-xs tracking-[0.2em] uppercase opacity-50">
+                        <span className="mb-2 text-sm opacity-50">
                             Elsewhere
                         </span>
                         {profile.linkedin && (
@@ -141,10 +139,10 @@ export default function SiteFooter({
                     </div>
                 </div>
 
-                <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-current/15 pt-6 text-xs tracking-[0.15em] uppercase opacity-70 md:flex-row md:items-center">
+                <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-current/15 pt-6 text-sm opacity-70 md:flex-row md:items-center">
                     <p>
                         © {new Date().getFullYear()} {profile.brand_name}
-                        {profile.location ? ` · ${profile.location}` : ''}
+                        {profile.location ? `, ${profile.location}` : ''}
                     </p>
                     <div className="flex items-center gap-6">
                         <LocalClock withLabel />

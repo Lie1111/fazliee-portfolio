@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { AVATAR_SRC } from '@/components/public/avatar';
 import LocalClock from '@/components/public/local-clock';
 import { about, contact, home, whatIDo } from '@/routes';
 import work from '@/routes/work';
@@ -57,7 +58,7 @@ function RollText({ label }: { label: string }) {
 }
 
 /**
- * Public site navigation: brand mark, live MYT clock and letter-roll links.
+ * Public site navigation: avatar brand mark and letter-roll links.
  * Collapses to a full-screen sheet on small screens.
  */
 export default function SiteNav({
@@ -77,24 +78,26 @@ export default function SiteNav({
     return (
         <header
             className={cn(
-                'fixed inset-x-0 top-0 z-50 px-4 py-5 md:px-8 backdrop-blur-md',
-                invert
-                    ? 'bg-brand-red/80 text-brand-cream'
-                    : 'bg-brand-cream/80 text-brand-ink',
+                'fixed inset-x-0 top-0 z-50 px-5 py-4 backdrop-blur-md transition-colors md:px-10',
+                invert ? 'bg-forest/85 text-paper' : 'bg-paper/85 text-ink',
             )}
         >
-            <div className="flex items-start justify-between gap-4">
+            <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
                 <Link
                     href={home.url()}
-                    className="public-display group/nav relative z-50 inline-flex items-center gap-2 text-lg"
+                    className="public-display group/nav relative z-50 inline-flex items-center gap-2.5 text-xl"
                     data-cursor="Home"
                 >
-                    <span className="inline-block size-2.5 rounded-full bg-brand-yellow" />
+                    <img
+                        src={AVATAR_SRC}
+                        alt=""
+                        aria-hidden
+                        className="size-9 rounded-full border-2 border-current object-cover transition-transform duration-500 group-hover/nav:-rotate-12"
+                    />
                     {brand}
                 </Link>
 
                 <div className="hidden items-center gap-8 md:flex">
-                    <LocalClock className="text-xs tracking-[0.2em] opacity-70" />
                     <nav className="flex items-center gap-7">
                         {ITEMS.map((item) => {
                             const active = item.match(url);
@@ -102,12 +105,19 @@ export default function SiteNav({
                                 <Link
                                     key={item.label}
                                     href={item.href}
-                                    className="group/nav text-xs font-semibold tracking-[0.18em] uppercase"
+                                    className="group/nav relative text-sm font-semibold"
                                     aria-current={active ? 'page' : undefined}
                                 >
-                                    <span className={cn(active && 'text-brand-yellow')}>
-                                        <RollText label={item.label} />
-                                    </span>
+                                    <RollText label={item.label} />
+                                    <span
+                                        aria-hidden
+                                        className={cn(
+                                            'absolute -bottom-1.5 left-0 h-0.5 w-full origin-left rounded-full bg-current transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                                            active
+                                                ? 'scale-x-100'
+                                                : 'scale-x-0 group-hover/nav:scale-x-100',
+                                        )}
+                                    />
                                 </Link>
                             );
                         })}
@@ -120,7 +130,11 @@ export default function SiteNav({
                     aria-label={open ? 'Close menu' : 'Open menu'}
                     className="relative z-50 md:hidden"
                 >
-                    {open ? <X className="size-6" /> : <Menu className="size-6" />}
+                    {open ? (
+                        <X className="size-6" />
+                    ) : (
+                        <Menu className="size-6" />
+                    )}
                 </button>
             </div>
 
@@ -128,7 +142,7 @@ export default function SiteNav({
                 <div
                     className={cn(
                         'fixed inset-0 z-40 flex flex-col justify-center gap-2 px-8',
-                        invert ? 'bg-brand-ink text-brand-cream' : 'bg-brand-red text-brand-cream',
+                        'bg-forest text-paper',
                     )}
                 >
                     {ITEMS.map((item) => (
@@ -136,11 +150,12 @@ export default function SiteNav({
                             key={item.label}
                             href={item.href}
                             className="public-display text-5xl"
+                            aria-current={item.match(url) ? 'page' : undefined}
                         >
                             {item.label}
                         </Link>
                     ))}
-                    <LocalClock className="mt-6 text-xs tracking-[0.2em] opacity-70" />
+                    <LocalClock withLabel className="mt-6 text-sm opacity-70" />
                 </div>
             )}
         </header>

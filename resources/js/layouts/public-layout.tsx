@@ -9,14 +9,18 @@ import SiteNav from '@/components/public/site-nav';
 import SmoothScroll from '@/components/public/smooth-scroll';
 import type { FlashProps, Profile } from '@/types/portfolio';
 
-/** Pages whose hero sits on a saturated red or dark background. */
-const INVERTED_PAGES = ['public/home', 'public/what-i-do', 'public/contact'];
+/** Pages whose hero sits on the dark forest background. */
+const INVERTED_PAGES = ['public/what-i-do', 'public/contact'];
 
 /**
  * Wraps every public page: smooth scrolling, custom cursor, preloader, colour
  * wipe transitions, grain overlay, navigation and footer.
  */
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+export default function PublicLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const page = usePage<{ profile: Profile | null; flash: FlashProps }>();
     const component = page.component;
     const profile = page.props.profile;
@@ -42,7 +46,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     const invert = INVERTED_PAGES.includes(component);
 
     return (
-        <div className="public-grain relative min-h-screen bg-brand-cream text-brand-ink antialiased">
+        <div className="public-site public-grain relative min-h-screen bg-paper text-ink antialiased">
             <SmoothScroll />
             <CustomCursor />
             <Preloader />
