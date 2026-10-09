@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import MagneticButton from '@/components/public/magnetic-button';
 import { CountUp, MaskReveal, Reveal } from '@/components/public/reveal';
-import { projectImage } from '@/lib/character';
+import ProjectCover from '@/components/public/project-cover';
 import { cn } from '@/lib/utils';
 import work from '@/routes/work';
 import type { Project, ProjectResult } from '@/types/portfolio';
@@ -18,10 +18,8 @@ function MetaItem({
     children: ReactNode;
 }) {
     return (
-        <div className={cn('border-t border-brand-ink/15 pt-4', className)}>
-            <dt className="text-[11px] font-semibold tracking-[0.3em] text-brand-ink/50 uppercase">
-                {label}
-            </dt>
+        <div className={cn('border-t-2 border-ink pt-4', className)}>
+            <dt className="text-sm text-ink/60">{label}</dt>
             <dd className="mt-3 text-sm">{children}</dd>
         </div>
     );
@@ -38,9 +36,9 @@ function ContentSection({
 }) {
     return (
         <Reveal delay={delay}>
-            <div className="grid gap-4 border-t border-brand-ink/10 py-14 md:grid-cols-12 md:gap-8 md:py-20">
+            <div className="grid gap-4 border-t border-ink/10 py-14 md:grid-cols-12 md:gap-8 md:py-20">
                 <div className="md:col-span-3">
-                    <h2 className="text-[11px] font-semibold tracking-[0.3em] text-brand-ink/50 uppercase md:sticky md:top-32">
+                    <h2 className="public-display text-2xl text-cap md:sticky md:top-32">
                         {label}
                     </h2>
                 </div>
@@ -54,21 +52,13 @@ function ContentSection({
     );
 }
 
-function StatCard({
-    result,
-    delay,
-}: {
-    result: ProjectResult;
-    delay: number;
-}) {
+function StatCard({ result, delay }: { result: ProjectResult; delay: number }) {
     return (
-        <Reveal delay={delay} className="border-t border-brand-cream/25 pt-6">
+        <Reveal delay={delay} className="border-t border-paper/25 pt-6">
             <p className="public-display text-4xl leading-none md:text-5xl">
                 <CountUp value={result.value} />
             </p>
-            <p className="mt-3 text-[11px] tracking-[0.3em] uppercase opacity-70">
-                {result.label}
-            </p>
+            <p className="mt-3 text-sm opacity-75">{result.label}</p>
         </Reveal>
     );
 }
@@ -80,7 +70,6 @@ export default function CaseStudy({
     project: Project;
     nextProject: Project | null;
 }) {
-    const hero = project.hero_media ?? projectImage(project.title, 'landscape_16_9');
     const tools = project.tools ?? [];
 
     const sections = [
@@ -100,30 +89,37 @@ export default function CaseStudy({
             </Head>
 
             {/* Hero media */}
-            <section className="bg-brand-cream px-5 pt-28 pb-14 md:px-10 md:pt-32 md:pb-20">
+            <section className="bg-paper px-5 pt-28 pb-14 md:px-10 md:pt-32 md:pb-20">
                 <div className="mx-auto max-w-7xl">
                     <Link
                         href={work.index.url()}
                         data-cursor="All work"
-                        className="group inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.3em] uppercase"
+                        className="group inline-flex items-center gap-2 text-sm font-semibold"
                     >
                         <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-1" />
                         All work
                     </Link>
 
                     <Reveal className="mt-8">
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-brand-ink md:aspect-[16/9]">
-                            <img
-                                src={hero}
-                                alt={project.title}
-                                className="size-full object-cover"
-                            />
+                        <div className="public-outline group relative aspect-[4/3] overflow-hidden rounded-2xl md:aspect-[16/9]">
+                            {project.hero_media ? (
+                                <img
+                                    src={project.hero_media}
+                                    alt={project.title}
+                                    className="size-full object-cover"
+                                />
+                            ) : (
+                                <ProjectCover
+                                    project={project}
+                                    index={project.sort_order}
+                                />
+                            )}
                             <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                                <span className="rounded-full bg-brand-cream px-3 py-1 text-[10px] font-semibold tracking-widest text-brand-ink uppercase">
+                                <span className="rounded-full border-2 border-ink bg-paper-light px-3 py-1 text-xs font-semibold text-ink">
                                     {project.category}
                                 </span>
                                 {project.badge && (
-                                    <span className="rounded-full bg-brand-yellow px-3 py-1 text-[10px] font-semibold tracking-widest text-brand-ink uppercase">
+                                    <span className="rounded-full border-2 border-ink bg-peach px-3 py-1 text-xs font-semibold text-ink">
                                         {project.badge}
                                     </span>
                                 )}
@@ -134,7 +130,7 @@ export default function CaseStudy({
             </section>
 
             {/* Title + summary + meta */}
-            <section className="bg-brand-cream px-5 pb-20 md:px-10 md:pb-28">
+            <section className="bg-paper px-5 pb-20 md:px-10 md:pb-28">
                 <div className="mx-auto max-w-7xl">
                     <h1 className="public-display text-[13vw] leading-[0.9] md:text-[7vw]">
                         <MaskReveal text={project.title} />
@@ -160,7 +156,9 @@ export default function CaseStudy({
                             <MetaItem
                                 label="Tools"
                                 className={cn(
-                                    project.client && project.year && project.role
+                                    project.client &&
+                                        project.year &&
+                                        project.role
                                         ? 'sm:col-span-2 md:col-span-1'
                                         : 'sm:col-span-2',
                                 )}
@@ -169,7 +167,7 @@ export default function CaseStudy({
                                     {tools.map((tool) => (
                                         <li
                                             key={tool}
-                                            className="rounded-full border border-brand-ink/20 px-3 py-1.5 text-xs tracking-wide"
+                                            className="rounded-full border-2 border-ink/30 px-3 py-1 text-xs"
                                         >
                                             {tool}
                                         </li>
@@ -187,7 +185,7 @@ export default function CaseStudy({
                                     target="_blank"
                                     rel="noreferrer"
                                     data-cursor="Play"
-                                    className="inline-flex items-center gap-2 rounded-full bg-brand-ink px-7 py-3.5 text-sm font-semibold text-brand-cream"
+                                    className="public-outline inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 font-semibold text-paper"
                                 >
                                     Live demo
                                     <ArrowUpRight className="size-4" />
@@ -200,7 +198,7 @@ export default function CaseStudy({
 
             {/* Narrative sections */}
             {sections.length > 0 && (
-                <section className="bg-brand-cream px-5 md:px-10">
+                <section className="bg-paper px-5 md:px-10">
                     <div className="mx-auto max-w-7xl">
                         {sections.map((section, index) => (
                             <ContentSection
@@ -216,7 +214,7 @@ export default function CaseStudy({
 
             {/* Results */}
             {results.length > 0 && (
-                <section className="bg-brand-red px-5 py-20 text-brand-cream md:px-10 md:py-28">
+                <section className="bg-forest px-5 py-20 text-paper md:px-10 md:py-28">
                     <div className="mx-auto max-w-7xl">
                         <h2 className="public-display text-[13vw] leading-none md:text-[6vw]">
                             Results
@@ -236,11 +234,9 @@ export default function CaseStudy({
 
             {/* Next project teaser */}
             {nextProject && (
-                <section className="bg-brand-ink px-5 py-20 text-brand-cream md:px-10 md:py-28">
+                <section className="bg-cap px-5 py-20 text-paper md:px-10 md:py-28">
                     <div className="mx-auto max-w-7xl">
-                        <p className="text-[11px] font-semibold tracking-[0.3em] uppercase opacity-50">
-                            Next project
-                        </p>
+                        <p className="text-sm opacity-70">Next project</p>
 
                         <Link
                             href={work.show({ project: nextProject.slug })}
@@ -248,15 +244,10 @@ export default function CaseStudy({
                             className="group mt-8 grid items-center gap-8 md:grid-cols-12"
                         >
                             <div className="md:col-span-5">
-                                <div className="relative aspect-[16/10] overflow-hidden rounded-3xl bg-brand-red">
-                                    <img
-                                        src={
-                                            nextProject.thumbnail ??
-                                            projectImage(nextProject.title)
-                                        }
-                                        alt={nextProject.title}
-                                        loading="lazy"
-                                        className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border-2 border-paper transition-transform duration-500 group-hover:-rotate-2">
+                                    <ProjectCover
+                                        project={nextProject}
+                                        index={nextProject.sort_order}
                                     />
                                 </div>
                             </div>
@@ -265,9 +256,9 @@ export default function CaseStudy({
                                 <h2 className="public-display text-4xl leading-[0.95] md:text-[5vw]">
                                     {nextProject.title}
                                 </h2>
-                                <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold tracking-widest uppercase">
+                                <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
                                     View case study
-                                    <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
+                                    <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
                                 </span>
                             </div>
                         </Link>

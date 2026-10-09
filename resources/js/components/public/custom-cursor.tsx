@@ -59,9 +59,9 @@ export default function CustomCursor() {
         };
 
         const onOver = (event: MouseEvent) => {
-            const el = (event.target as HTMLElement | null)?.closest<HTMLElement>(
-                '[data-cursor]',
-            );
+            const el = (
+                event.target as HTMLElement | null
+            )?.closest<HTMLElement>('[data-cursor]');
 
             if (el) {
                 setLabel(el.dataset.cursor ?? '');
@@ -140,10 +140,14 @@ export default function CustomCursor() {
                 ref={ringRef}
                 aria-hidden
                 className={cn(
-                    'pointer-events-none fixed top-0 left-0 z-[100] flex items-center justify-center rounded-full text-center text-[10px] font-semibold tracking-wider uppercase transition-[width,height,background-color,color] duration-300',
-                    hovering
-                        ? 'size-20 bg-brand-yellow text-brand-ink'
-                        : 'size-9 border border-white/80 bg-transparent text-transparent mix-blend-difference',
+                    'pointer-events-none fixed top-0 left-0 z-[100] flex items-center justify-center rounded-full text-center text-xs font-semibold transition-[width,height,background-color,color] duration-300',
+                    // Only labelled targets get the big filled bubble; plain
+                    // links just get a slightly larger ring so text stays readable.
+                    label
+                        ? 'size-20 border-2 border-ink bg-peach text-ink'
+                        : hovering
+                          ? 'size-12 border-2 border-white bg-transparent text-transparent mix-blend-difference'
+                          : 'size-9 border border-white/80 bg-transparent text-transparent mix-blend-difference',
                 )}
             >
                 {label}

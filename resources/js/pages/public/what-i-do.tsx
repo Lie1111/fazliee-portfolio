@@ -1,5 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import {
+    AnimatePresence,
+    motion,
+    useScroll,
+    useTransform,
+} from 'framer-motion';
 import {
     ArrowRight,
     Boxes,
@@ -63,7 +68,8 @@ function resolveServiceIcon(icon: string | null, index: number): IconComponent {
 const PROCESS: { name: string; description: string }[] = [
     {
         name: 'Understand',
-        description: 'We talk through your goals, your users and the constraints.',
+        description:
+            'We talk through your goals, your users and the constraints.',
     },
     {
         name: 'Design',
@@ -75,22 +81,26 @@ const PROCESS: { name: string; description: string }[] = [
     },
     {
         name: 'Launch',
-        description: 'We go live, measure what matters and refine after release.',
+        description:
+            'We go live, measure what matters and refine after release.',
     },
 ];
 
 const ENGAGEMENTS: { label: string; description: string }[] = [
     {
         label: 'Freelance',
-        description: 'Project-based work — I scope, build and ship the whole thing.',
+        description:
+            'Project-based work — I scope, build and ship the whole thing.',
     },
     {
         label: 'Internship',
-        description: 'Hands-on learning inside a real team, eager to grow fast.',
+        description:
+            'Hands-on learning inside a real team, eager to grow fast.',
     },
     {
         label: 'Full-time',
-        description: 'Ready to join a product team and own features end to end.',
+        description:
+            'Ready to join a product team and own features end to end.',
     },
 ];
 
@@ -130,8 +140,10 @@ function ServiceRow({
     return (
         <div
             className={cn(
-                'overflow-hidden rounded-3xl bg-brand-ink transition-shadow duration-300',
-                isOpen && 'ring-1 ring-brand-cream/15',
+                'overflow-hidden rounded-3xl border-2 transition-colors duration-300',
+                isOpen
+                    ? 'border-ink bg-paper-light text-ink'
+                    : 'border-paper/25 hover:border-paper',
             )}
         >
             <button
@@ -141,22 +153,21 @@ function ServiceRow({
                 data-cursor={isOpen ? 'Close' : 'Open'}
                 className="group flex w-full items-center gap-5 p-6 text-left md:gap-8 md:p-9"
             >
-                <span className="public-display w-16 shrink-0 text-5xl opacity-40 transition-opacity duration-300 group-hover:opacity-70 md:w-32 md:text-7xl">
-                    {service.number}
+                <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-current md:size-14">
+                    <Icon className="size-5 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-12 md:size-6" />
                 </span>
 
                 <span className="public-display flex-1 text-2xl md:text-4xl">
                     {service.title}
                 </span>
 
-                <span className="hidden size-12 shrink-0 items-center justify-center rounded-full border border-brand-cream/25 md:inline-flex">
-                    <Icon className="size-5 transition-transform duration-500 ease-out group-hover:-rotate-12 group-hover:scale-110" />
-                </span>
-
                 <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-cream text-brand-ink"
+                    className={cn(
+                        'inline-flex size-11 shrink-0 items-center justify-center rounded-full',
+                        isOpen ? 'bg-ink text-paper' : 'bg-paper text-ink',
+                    )}
                 >
                     <Plus className="size-5" />
                 </motion.span>
@@ -172,7 +183,7 @@ function ServiceRow({
                         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden"
                     >
-                        <div className="px-6 pb-8 md:px-9 md:pb-10 md:pl-[10.5rem]">
+                        <div className="px-6 pb-8 md:px-9 md:pb-10 md:pl-[7.5rem]">
                             <p className="max-w-2xl text-sm leading-relaxed opacity-75">
                                 {service.description}
                             </p>
@@ -182,7 +193,7 @@ function ServiceRow({
                                     {items.map((item) => (
                                         <li
                                             key={item}
-                                            className="rounded-full border border-brand-cream/25 px-4 py-1.5 text-xs tracking-wide"
+                                            className="rounded-full border border-paper/25 px-4 py-1.5 text-xs tracking-wide"
                                         >
                                             {item}
                                         </li>
@@ -209,29 +220,34 @@ function ProcessTimeline() {
     return (
         <div ref={ref} className="relative mt-14">
             {/* Desktop: horizontal connector */}
-            <div className="absolute top-7 right-7 left-7 hidden h-px bg-brand-cream/20 md:block">
+            <div className="absolute top-7 right-7 left-7 hidden h-px bg-paper/20 md:block">
                 <motion.div
                     style={{ scaleX }}
-                    className="h-full w-full origin-left bg-brand-yellow"
+                    className="h-full w-full origin-left bg-peach"
                 />
             </div>
 
             {/* Mobile: vertical connector */}
-            <div className="absolute top-0 bottom-0 left-7 w-px bg-brand-cream/20 md:hidden">
+            <div className="absolute top-0 bottom-0 left-7 w-px bg-paper/20 md:hidden">
                 <motion.div
                     style={{ scaleY }}
-                    className="h-full w-full origin-top bg-brand-yellow"
+                    className="h-full w-full origin-top bg-peach"
                 />
             </div>
 
             <ol className="grid gap-10 md:grid-cols-4 md:gap-6">
                 {PROCESS.map((step, index) => (
-                    <li key={step.name} className="relative flex gap-5 md:block">
-                        <span className="public-display relative z-10 flex size-14 shrink-0 items-center justify-center rounded-full border border-brand-cream/30 bg-brand-red text-xl">
+                    <li
+                        key={step.name}
+                        className="relative flex gap-5 md:block"
+                    >
+                        <span className="public-display relative z-10 flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-paper bg-cap text-xl">
                             {String(index + 1).padStart(2, '0')}
                         </span>
                         <div className="md:mt-6">
-                            <h3 className="public-display text-2xl">{step.name}</h3>
+                            <h3 className="public-display text-2xl">
+                                {step.name}
+                            </h3>
                             <p className="mt-2 max-w-xs text-sm opacity-70">
                                 {step.description}
                             </p>
@@ -247,7 +263,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="border-b border-brand-cream/20">
+        <div className="border-b border-paper/20">
             <button
                 type="button"
                 onClick={() => setOpen((value) => !value)}
@@ -261,7 +277,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
                 <motion.span
                     animate={{ rotate: open ? 45 : 0 }}
                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-brand-cream/30 transition-colors group-hover:bg-brand-cream group-hover:text-brand-ink"
+                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-paper/30 transition-colors group-hover:bg-paper group-hover:text-ink"
                 >
                     <Plus className="size-4" />
                 </motion.span>
@@ -274,7 +290,10 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{
+                            duration: 0.35,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
                         className="overflow-hidden"
                     >
                         <p className="max-w-2xl pb-6 text-sm leading-relaxed opacity-75">
@@ -301,28 +320,23 @@ export default function WhatIDo({ services }: { services: Service[] }) {
             <Head title="What I Do" />
 
             {/* Hero */}
-            <section className="bg-brand-red px-5 pt-32 pb-16 text-brand-cream md:px-10 md:pt-40 md:pb-24">
+            <section className="bg-forest px-5 pt-32 pb-16 text-paper md:px-10 md:pt-40 md:pb-24">
                 <div className="mx-auto max-w-7xl">
-                    <Reveal>
-                        <p className="text-xs tracking-[0.3em] uppercase opacity-60">
-                            Services
-                        </p>
-                    </Reveal>
-                    <h1 className="public-display mt-6 text-[18vw] leading-[0.85] md:text-[10vw]">
-                        <MaskReveal text="What I Do" />
+                    <h1 className="public-display text-[18vw] leading-[0.85] md:text-[10vw]">
+                        <MaskReveal text="What I do" />
                     </h1>
                     <Reveal delay={0.2} className="mt-8 max-w-xl">
                         <p className="text-sm leading-relaxed opacity-85">
-                            I design and build digital products end to end — mobile
-                            apps, websites and interactive experiences. Here is what I
-                            can help you with.
+                            I design and build digital products end to end —
+                            mobile apps, websites and interactive experiences.
+                            Here is what I can help you with.
                         </p>
                     </Reveal>
                 </div>
             </section>
 
             {/* Services accordion */}
-            <section className="bg-brand-red px-5 pb-24 text-brand-cream md:px-10 md:pb-32">
+            <section className="bg-forest px-5 pb-24 text-paper md:px-10 md:pb-32">
                 <div className="mx-auto max-w-7xl space-y-5">
                     {services.map((service, index) => (
                         <ServiceRow
@@ -335,21 +349,17 @@ export default function WhatIDo({ services }: { services: Service[] }) {
                     ))}
                     {services.length === 0 && (
                         <p className="text-sm opacity-60">
-                            Services will appear here once added in the control panel.
+                            Services will appear here once added in the control
+                            panel.
                         </p>
                     )}
                 </div>
             </section>
 
             {/* Process timeline */}
-            <section className="border-t border-brand-cream/15 bg-brand-red px-5 py-24 text-brand-cream md:px-10 md:py-32">
+            <section className="border-t border-paper/15 bg-forest px-5 py-24 text-paper md:px-10 md:py-32">
                 <div className="mx-auto max-w-7xl">
-                    <Reveal>
-                        <p className="text-xs tracking-[0.3em] uppercase opacity-60">
-                            Process
-                        </p>
-                    </Reveal>
-                    <h2 className="public-display mt-6 text-[14vw] leading-none md:text-[7vw]">
+                    <h2 className="public-display text-[14vw] leading-none md:text-[7vw]">
                         <MaskReveal text="How it works" />
                     </h2>
                     <ProcessTimeline />
@@ -357,29 +367,26 @@ export default function WhatIDo({ services }: { services: Service[] }) {
             </section>
 
             {/* Work with me */}
-            <section className="bg-brand-red px-5 pb-24 text-brand-cream md:px-10 md:pb-32">
+            <section className="bg-forest px-5 pb-24 text-paper md:px-10 md:pb-32">
                 <Reveal className="mx-auto max-w-7xl">
-                    <div className="rounded-[2.5rem] bg-brand-ink p-8 md:p-14">
+                    <div className="public-outline rounded-3xl bg-paper-light p-8 text-ink md:p-14">
                         <div className="flex flex-wrap items-end justify-between gap-6">
                             <h2 className="public-display text-4xl md:text-6xl">
                                 Work with me
                             </h2>
                             <p className="max-w-sm text-sm opacity-70">
-                                Pick the setup that fits — each one starts with a
-                                conversation.
+                                Pick the setup that fits — each one starts with
+                                a conversation.
                             </p>
                         </div>
 
                         <div className="mt-12 grid gap-8 md:grid-cols-3">
-                            {ENGAGEMENTS.map((item, index) => (
+                            {ENGAGEMENTS.map((item) => (
                                 <div
                                     key={item.label}
-                                    className="border-t border-brand-cream/20 pt-6"
+                                    className="border-t-2 border-ink pt-6"
                                 >
-                                    <span className="text-xs tracking-[0.25em] uppercase opacity-50">
-                                        {String(index + 1).padStart(2, '0')}
-                                    </span>
-                                    <h3 className="public-display mt-3 text-3xl">
+                                    <h3 className="public-display text-3xl">
                                         {item.label}
                                     </h3>
                                     <p className="mt-3 text-sm opacity-70">
@@ -393,13 +400,15 @@ export default function WhatIDo({ services }: { services: Service[] }) {
             </section>
 
             {/* FAQ */}
-            <section className="border-t border-brand-cream/15 bg-brand-red px-5 py-24 text-brand-cream md:px-10 md:py-32">
+            <section className="border-t border-paper/15 bg-forest px-5 py-24 text-paper md:px-10 md:py-32">
                 <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-12">
                     <div className="md:col-span-4">
-                        <h2 className="public-display text-4xl md:text-6xl">FAQ</h2>
+                        <h2 className="public-display text-4xl md:text-6xl">
+                            FAQ
+                        </h2>
                         <p className="mt-4 max-w-xs text-sm opacity-70">
-                            Still curious? The short answers are below — or just say
-                            hello.
+                            Still curious? The short answers are below — or just
+                            say hello.
                         </p>
                     </div>
                     <div className="md:col-span-8">
@@ -415,24 +424,25 @@ export default function WhatIDo({ services }: { services: Service[] }) {
             </section>
 
             {/* CTA */}
-            <section className="bg-brand-red px-5 pb-24 md:px-10 md:pb-32">
+            <section className="bg-forest px-5 pb-24 md:px-10 md:pb-32">
                 <Reveal className="mx-auto max-w-7xl">
-                    <div className="rounded-[2.5rem] bg-brand-yellow px-6 py-16 text-brand-ink md:px-16 md:py-24">
+                    <div className="public-outline rounded-3xl bg-peach px-6 py-16 text-ink md:px-16 md:py-24">
                         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
                             <div>
                                 <h2 className="public-display text-[12vw] leading-[0.9] md:text-[6vw]">
                                     <MaskReveal text="Ready when you are" />
                                 </h2>
                                 <p className="mt-6 max-w-md text-sm opacity-80">
-                                    Have an idea, a brief or just a rough thought? Tell
-                                    me about it and let us make it real.
+                                    Have an idea, a brief or just a rough
+                                    thought? Tell me about it and let us make it
+                                    real.
                                 </p>
                             </div>
                             <MagneticButton className="shrink-0">
                                 <Link
                                     href={contact.url()}
                                     data-cursor="Start"
-                                    className="group inline-flex items-center gap-2 rounded-full bg-brand-ink px-8 py-4 text-sm font-semibold text-brand-cream"
+                                    className="group inline-flex items-center gap-2 rounded-full bg-ink px-8 py-4 text-sm font-semibold text-paper"
                                 >
                                     Start a project
                                     <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />

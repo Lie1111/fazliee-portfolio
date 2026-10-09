@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 /**
- * Red/black colour-wipe page transition. A panel sweeps up to cover the page
+ * Forest-green colour-wipe page transition. A panel sweeps up to cover the page
  * on navigation start, then sweeps away on finish.
  */
 export default function PageTransition() {
@@ -38,7 +38,7 @@ export default function PageTransition() {
             {phase !== 'idle' && (
                 <motion.div
                     key="wipe"
-                    className="pointer-events-none fixed inset-0 z-[150] bg-brand-ink"
+                    className="pointer-events-none fixed inset-0 z-[150] bg-forest"
                     initial={{ scaleY: 0 }}
                     animate={{ scaleY: phase === 'cover' ? 1 : 0 }}
                     exit={{ scaleY: 0 }}

@@ -1,4 +1,10 @@
-import { motion, useScroll, useVelocity, useSpring, useTransform } from 'framer-motion';
+import {
+    motion,
+    useScroll,
+    useVelocity,
+    useSpring,
+    useTransform,
+} from 'framer-motion';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +38,7 @@ export default function Marquee({
                     className={cn('flex items-center', itemClassName)}
                 >
                     <span className="px-6">{item}</span>
-                    <span aria-hidden className="text-brand-yellow">
+                    <span aria-hidden className="text-peach">
                         {separator}
                     </span>
                 </span>
@@ -43,7 +49,7 @@ export default function Marquee({
     return (
         <div className={cn('relative overflow-hidden py-6', className)}>
             <motion.div style={{ skewX: skew }} className="flex w-max">
-                <div className="flex w-max [animation:public-marquee_28s_linear_infinite]">
+                <div className="public-marquee-track flex w-max [animation:public-marquee_40s_linear_infinite]">
                     {row}
                     {row}
                 </div>

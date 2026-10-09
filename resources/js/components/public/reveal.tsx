@@ -4,7 +4,9 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Splits text into words that slide up from a mask, staggered.
+ * Splits text into words that slide up from a mask, staggered. The whole
+ * line is observed (not each word), because a word parked below its mask has
+ * no visible area and would never register as in view.
  */
 export function MaskReveal({
     text,
@@ -22,28 +24,39 @@ export function MaskReveal({
     const words = text.split(' ');
 
     return (
-        <span className={cn('inline-flex flex-wrap', className)}>
+        <motion.span
+            className={cn('inline-flex flex-wrap', className)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '0px 0px -10% 0px' }}
+        >
             {words.map((word, index) => (
                 <span
                     key={`${word}-${index}`}
                     className="overflow-hidden pb-[0.12em] leading-[1.05]"
                 >
                     <motion.span
-                        className={cn('inline-block pr-[0.24em]', wordClassName)}
-                        initial={{ y: '110%' }}
-                        whileInView={{ y: 0 }}
-                        viewport={{ once: true, margin: '-10%' }}
-                        transition={{
-                            duration: 0.75,
-                            delay: delay + index * stagger,
-                            ease: [0.22, 1, 0.36, 1],
+                        className={cn(
+                            'inline-block pr-[0.24em]',
+                            wordClassName,
+                        )}
+                        variants={{
+                            hidden: { y: '110%' },
+                            visible: {
+                                y: 0,
+                                transition: {
+                                    duration: 0.75,
+                                    delay: delay + index * stagger,
+                                    ease: [0.22, 1, 0.36, 1],
+                                },
+                            },
                         }}
                     >
                         {word}
                     </motion.span>
                 </span>
             ))}
-        </span>
+        </motion.span>
     );
 }
 
@@ -78,7 +91,13 @@ export function Reveal({
  * Counts a numeric string up to its value once it scrolls into view.
  * Non-numeric values (e.g. "TOP 10") are returned untouched.
  */
-export function CountUp({ value, className }: { value: string; className?: string }) {
+export function CountUp({
+    value,
+    className,
+}: {
+    value: string;
+    className?: string;
+}) {
     const ref = useRef<HTMLSpanElement | null>(null);
     const inView = useInView(ref, { once: true, margin: '-15%' });
     const [display, setDisplay] = useState(value);

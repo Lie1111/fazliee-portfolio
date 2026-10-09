@@ -1,11 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import { ArrowRight, Download, MapPin, Sparkles } from 'lucide-react';
-import { useEffect, useMemo, useRef } from 'react';
-import Character from '@/components/public/character';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import Avatar from '@/components/public/avatar';
 import MagneticButton from '@/components/public/magnetic-button';
 import { MaskReveal, Reveal } from '@/components/public/reveal';
-import { projectImage } from '@/lib/character';
-import type { ImageSize } from '@/lib/character';
 import { cn } from '@/lib/utils';
 import { contact } from '@/routes';
 import type { Profile, Skill, TimelineItem } from '@/types/portfolio';
@@ -35,50 +33,6 @@ const FUN_FACTS: FunFact[] = [
         id: 3,
         prompt: 'Life motto?',
         answer: 'Ship it, learn from it, then make it a little better.',
-    },
-];
-
-type CollagePhoto = {
-    subject: string;
-    size: ImageSize;
-    aspect: string;
-    rotation: string;
-    span: string;
-    offset: string;
-};
-
-const COLLAGE: CollagePhoto[] = [
-    {
-        subject: 'creative workspace with dual monitors and sketches',
-        size: 'landscape_4_3',
-        aspect: 'aspect-[16/11]',
-        rotation: '-rotate-2',
-        span: 'col-span-12 md:col-span-7',
-        offset: '',
-    },
-    {
-        subject: 'creative IT graduate portrait holding a laptop',
-        size: 'portrait_4_3',
-        aspect: 'aspect-[4/5]',
-        rotation: 'rotate-2',
-        span: 'col-span-6 md:col-span-5',
-        offset: 'md:mt-16',
-    },
-    {
-        subject: 'mobile app wireframes and sticky notes on a desk',
-        size: 'square_hd',
-        aspect: 'aspect-square',
-        rotation: 'rotate-1',
-        span: 'col-span-6 md:col-span-5',
-        offset: 'md:-mt-10',
-    },
-    {
-        subject: 'team collaborating around a whiteboard',
-        size: 'landscape_4_3',
-        aspect: 'aspect-[16/11]',
-        rotation: '-rotate-1',
-        span: 'col-span-12 md:col-span-7',
-        offset: 'md:mt-8',
     },
 ];
 
@@ -189,7 +143,7 @@ function CursorGrid({ items }: { items: Skill[] }) {
                     ref={(el) => {
                         cardRefs.current[index] = el;
                     }}
-                    className="rounded-2xl border border-brand-ink/15 bg-white/40 px-4 py-5 text-center text-sm font-semibold transition-colors duration-300 will-change-transform hover:border-brand-ink hover:bg-brand-ink hover:text-brand-cream"
+                    className="rounded-2xl border-2 border-ink bg-paper-light px-4 py-5 text-center font-semibold transition-colors duration-300 will-change-transform hover:bg-cap hover:text-paper"
                 >
                     {skill.name}
                 </div>
@@ -199,31 +153,40 @@ function CursorGrid({ items }: { items: Skill[] }) {
 }
 
 /**
- * A 3D card that flips to reveal its answer on hover.
+ * A card that flips to reveal its answer on hover, tap or keyboard press.
  */
 function FlipCard({ fact }: { fact: FunFact }) {
+    const [flipped, setFlipped] = useState(false);
+
     return (
-        <div className="group h-64 [perspective:1200px]" data-cursor="Flip">
-            <div className="relative size-full transition-transform duration-700 ease-out [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                <div className="absolute inset-0 flex flex-col justify-between rounded-3xl bg-brand-cream p-7 text-brand-ink [backface-visibility:hidden]">
-                    <span className="text-xs font-semibold tracking-[0.3em] uppercase opacity-50">
-                        Fun fact
-                    </span>
-                    <h3 className="public-display text-2xl md:text-3xl">
+        <button
+            type="button"
+            onClick={() => setFlipped((value) => !value)}
+            aria-pressed={flipped}
+            aria-label={`${fact.prompt} ${flipped ? fact.answer : 'Show answer'}`}
+            data-cursor="Flip"
+            className="group block h-64 w-full text-left [perspective:1200px]"
+        >
+            <span
+                className={cn(
+                    'relative block size-full transition-transform duration-700 ease-[cubic-bezier(0.34,1.4,0.64,1)] [transform-style:preserve-3d] [@media(hover:hover)]:group-hover:[transform:rotateY(180deg)]',
+                    flipped && '[transform:rotateY(180deg)]',
+                )}
+            >
+                <span className="absolute inset-0 flex flex-col justify-between rounded-2xl border-2 border-ink bg-paper-light p-7 text-ink [backface-visibility:hidden]">
+                    <span className="public-display text-3xl">
                         {fact.prompt}
-                    </h3>
-                    <span className="text-xs tracking-widest uppercase opacity-50">
-                        Hover to reveal
                     </span>
-                </div>
-                <div className="absolute inset-0 flex flex-col justify-between rounded-3xl bg-brand-ink p-7 text-brand-cream [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                    <Sparkles className="size-6 text-brand-yellow" />
-                    <p className="text-lg leading-snug font-medium">
+                    <span className="text-sm opacity-60">Tap to find out</span>
+                </span>
+                <span className="absolute inset-0 flex [transform:rotateY(180deg)] flex-col justify-between rounded-2xl border-2 border-ink bg-peach p-7 text-ink [backface-visibility:hidden]">
+                    <Sparkles className="size-6" />
+                    <span className="text-xl leading-snug font-medium">
                         {fact.answer}
-                    </p>
-                </div>
-            </div>
-        </div>
+                    </span>
+                </span>
+            </span>
+        </button>
     );
 }
 
@@ -232,7 +195,7 @@ function FlipCard({ fact }: { fact: FunFact }) {
  */
 function TimelineList({
     items,
-    borderClassName = 'border-brand-ink/15',
+    borderClassName = 'border-ink/15',
 }: {
     items: TimelineItem[];
     borderClassName?: string;
@@ -241,9 +204,9 @@ function TimelineList({
         <ol className={cn('relative border-l pl-8', borderClassName)}>
             {items.map((entry) => (
                 <li key={entry.id} className="relative pb-10 last:pb-0">
-                    <span className="absolute top-1.5 -left-[2.4rem] size-3 rounded-full bg-brand-red" />
+                    <span className="absolute top-1 -left-[2.55rem] size-4 rounded-full border-2 border-current bg-cap" />
                     {entry.period && (
-                        <p className="text-xs font-semibold tracking-[0.25em] uppercase opacity-60">
+                        <p className="text-sm font-semibold text-cap">
                             {entry.period}
                         </p>
                     )}
@@ -278,31 +241,25 @@ export default function About({
     experience: TimelineItem[];
 }) {
     const brand = profile?.brand_name ?? 'Fazliee Aiman';
-    const firstName = (profile?.name ?? brand).trim().split(/\s+/)[0] ?? 'Fazliee';
+    // The brand name is what people call him ("Fazliee"), not the legal first name.
+    const firstName = brand.trim().split(/\s+/)[0] ?? 'Fazliee';
     const groups = useMemo(() => groupSkills(skills), [skills]);
 
     return (
         <>
             <Head title="About" />
 
-            <div className="bg-brand-cream text-brand-ink">
+            <div className="bg-paper text-ink">
                 {/* Hero */}
                 <section className="relative overflow-hidden px-5 pt-32 pb-20 md:px-10 md:pt-40 md:pb-28">
                     <div className="mx-auto grid w-full max-w-7xl items-center gap-10 md:grid-cols-12">
                         <div className="md:col-span-7">
-                            <Reveal>
-                                <p className="text-xs font-semibold tracking-[0.3em] uppercase opacity-60">
-                                    About
-                                </p>
-                            </Reveal>
-                            <h1 className="public-display mt-4 text-[15vw] leading-[0.86] md:text-[7.2vw]">
-                                <MaskReveal
-                                    text={`HI, I'M ${firstName.toUpperCase()}.`}
-                                />
+                            <h1 className="public-display text-[15vw] leading-[0.86] md:text-[7.2vw]">
+                                <MaskReveal text={`Hi, I'm ${firstName}.`} />
                             </h1>
                             <Reveal
                                 delay={0.25}
-                                className="mt-8 flex flex-wrap items-center gap-4 text-xs opacity-80"
+                                className="mt-8 flex flex-wrap items-center gap-4 text-sm opacity-80"
                             >
                                 {profile?.availability && (
                                     <span className="inline-flex items-center gap-2">
@@ -326,21 +283,26 @@ export default function About({
                                 delay={0.15}
                                 className="mx-auto w-[58vw] max-w-xs md:w-full md:max-w-sm"
                             >
-                                <Character alt={profile?.name ?? brand} />
+                                <Avatar
+                                    bubble
+                                    lines={[
+                                        'Selamat datang!',
+                                        'Flutter is my favourite.',
+                                        'Coffee first, then code.',
+                                    ]}
+                                    alt={`Illustrated portrait of ${profile?.name ?? brand}`}
+                                />
                             </Reveal>
                         </div>
                     </div>
                 </section>
 
                 {/* Story */}
-                <section className="bg-brand-ink px-5 py-24 text-brand-cream md:px-10 md:py-32">
+                <section className="bg-forest px-5 py-24 text-paper md:px-10 md:py-32">
                     <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-12">
                         <div className="md:col-span-8">
-                            <p className="text-xs tracking-[0.3em] uppercase opacity-50">
-                                The story
-                            </p>
                             <Reveal delay={0.1}>
-                                <p className="public-display mt-6 text-3xl leading-[1.08] md:text-[3.2vw]">
+                                <p className="public-display text-3xl leading-[1.08] md:text-[3.2vw]">
                                     {profile?.about_story ??
                                         'A longer story is on its way.'}
                                 </p>
@@ -364,7 +326,8 @@ export default function About({
                                 <MaskReveal text="Skills" />
                             </h2>
                             <p className="max-w-xs text-sm opacity-70">
-                                The tools I reach for, grouped by how I use them.
+                                The tools I reach for, grouped by how I use
+                                them.
                             </p>
                         </div>
 
@@ -375,7 +338,7 @@ export default function About({
                                         <h3 className="public-display text-2xl md:text-3xl">
                                             {group.category}
                                         </h3>
-                                        <span className="text-xs tracking-[0.25em] uppercase opacity-50">
+                                        <span className="text-xs opacity-50">
                                             {String(
                                                 group.items.length,
                                             ).padStart(2, '0')}
@@ -387,7 +350,7 @@ export default function About({
                                             delay={0.1}
                                             className="mt-6 max-w-xl"
                                         >
-                                            <ul className="divide-y divide-brand-ink/15 border-y border-brand-ink/15">
+                                            <ul className="divide-y divide-ink/15 border-y border-ink/15">
                                                 {group.items.map(
                                                     (skill, index) => (
                                                         <li
@@ -397,7 +360,7 @@ export default function About({
                                                             <span className="public-display text-xl">
                                                                 {skill.name}
                                                             </span>
-                                                            <span className="rounded-full bg-brand-ink px-3 py-1 text-[10px] font-semibold tracking-widest text-brand-cream uppercase">
+                                                            <span className="rounded-full bg-ink px-3 py-1 text-xs font-semibold text-paper">
                                                                 {LANGUAGE_PROFICIENCY[
                                                                     index
                                                                 ] ??
@@ -427,7 +390,7 @@ export default function About({
                 </section>
 
                 {/* Fun facts */}
-                <section className="bg-brand-red px-5 py-24 text-brand-cream md:px-10 md:py-32">
+                <section className="bg-cap px-5 py-24 text-paper md:px-10 md:py-32">
                     <div className="mx-auto max-w-7xl">
                         <h2 className="public-display text-[14vw] leading-none md:text-[7vw]">
                             <MaskReveal text="Off the clock" />
@@ -443,46 +406,8 @@ export default function About({
                     </div>
                 </section>
 
-                {/* Snapshots collage */}
-                <section className="px-5 py-24 md:px-10 md:py-32">
-                    <div className="mx-auto max-w-7xl">
-                        <h2 className="public-display text-[14vw] leading-none md:text-[7vw]">
-                            <MaskReveal text="Snapshots" />
-                        </h2>
-
-                        <div className="mt-14 grid grid-cols-12 items-start gap-4 md:gap-6">
-                            {COLLAGE.map((photo, index) => (
-                                <Reveal
-                                    key={photo.subject}
-                                    delay={index * 0.06}
-                                    className={cn(photo.span, photo.offset)}
-                                >
-                                    <div
-                                        data-cursor="Snapshot"
-                                        className={cn(
-                                            'overflow-hidden rounded-3xl border border-brand-ink/10 bg-brand-ink shadow-sm transition-transform duration-500 ease-out will-change-transform hover:rotate-0',
-                                            photo.aspect,
-                                            photo.rotation,
-                                        )}
-                                    >
-                                        <img
-                                            src={projectImage(
-                                                photo.subject,
-                                                photo.size,
-                                            )}
-                                            alt={photo.subject}
-                                            loading="lazy"
-                                            className="size-full object-cover"
-                                        />
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
                 {/* Resume + contact */}
-                <section className="bg-brand-yellow px-5 py-24 text-brand-ink md:px-10 md:py-32">
+                <section className="bg-peach px-5 py-24 text-ink md:px-10 md:py-32">
                     <div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-12">
                         <div className="md:col-span-8">
                             <h2 className="public-display text-[13vw] leading-[0.92] md:text-[6vw]">
@@ -503,7 +428,7 @@ export default function About({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         data-cursor="Download"
-                                        className="inline-flex items-center gap-2 rounded-full bg-brand-ink px-7 py-3.5 text-sm font-semibold text-brand-cream"
+                                        className="public-outline inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 font-semibold text-paper"
                                     >
                                         Download resume
                                         <Download className="size-4" />
@@ -514,7 +439,7 @@ export default function About({
                                 <Link
                                     href={contact.url()}
                                     data-cursor="Say hi"
-                                    className="inline-flex items-center gap-2 rounded-full border border-brand-ink/50 px-7 py-3.5 text-sm font-semibold text-brand-ink"
+                                    className="inline-flex items-center gap-2 rounded-full border border-ink/50 px-7 py-3.5 text-sm font-semibold text-ink"
                                 >
                                     Let&apos;s talk
                                     <ArrowRight className="size-4" />
@@ -528,10 +453,7 @@ export default function About({
                 <section className="px-5 py-24 md:px-10 md:py-32">
                     <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-12">
                         <div className="md:col-span-4">
-                            <p className="text-xs tracking-[0.3em] uppercase opacity-50">
-                                Education
-                            </p>
-                            <h2 className="public-display mt-4 text-4xl md:text-5xl">
+                            <h2 className="public-display text-4xl md:text-6xl">
                                 Where I learned
                             </h2>
                         </div>
@@ -549,13 +471,10 @@ export default function About({
                 </section>
 
                 {/* Experience */}
-                <section className="bg-brand-ink px-5 py-24 text-brand-cream md:px-10 md:py-32">
+                <section className="bg-forest px-5 py-24 text-paper md:px-10 md:py-32">
                     <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-12">
                         <div className="md:col-span-4">
-                            <p className="text-xs tracking-[0.3em] uppercase opacity-50">
-                                Experience
-                            </p>
-                            <h2 className="public-display mt-4 text-4xl md:text-5xl">
+                            <h2 className="public-display text-4xl md:text-6xl">
                                 What I&apos;ve done
                             </h2>
                         </div>
@@ -563,7 +482,7 @@ export default function About({
                             {experience.length > 0 ? (
                                 <TimelineList
                                     items={experience}
-                                    borderClassName="border-brand-cream/20"
+                                    borderClassName="border-paper/20"
                                 />
                             ) : (
                                 <p className="text-sm opacity-60">
